@@ -20,21 +20,18 @@ const MainForm = () => {
     axios.get("/api/genres", genreReqConfig)
     .then((res) => {
       setGenreList(res.data)
-      console.log(`Genre list in mainform: ${genreList}`)
     })
   }, [])
   
   return (
     <PageContainer>
-      <h1>
+      <h1 className='flex w-fit'>
         What should I watch?
       </h1>
       
       <div>
+        { genreList ? <GenreListView genres={genreList}/> : <h1>Loading...</h1>}
         
-        <GenreListView
-          genres={genreList}
-        />
         <AddMoviesGrid
           movieList={movieList}
         />
