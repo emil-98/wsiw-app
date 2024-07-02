@@ -20,29 +20,38 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-const discoverMovieURL = `https://api.themoviedb.org/3/discover/movie?with_genres`
+const baseConfig = {
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${tmdbReadAccess}`
+  }
+}
+
+const discoverMovieURL = 'https://api.themoviedb.org/3/discover/movie'
 const genreListURL = 'https://api.themoviedb.org/3/genre/movie/list'
 
 app.get('/', (req, res) => {
   res.json({message: "Hello"})
 })
 
-app.get('/api/findmovies', (req, res) => {
-  
-})
-
 app.get('/api/genres', async (req, res) => {
 
-  const config = {
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${tmdbReadAccess}`
-    }
-  }
+  const tmdbRes = await axios.get(genreListURL, baseConfig).catch(err => console.log(err))
 
-  const extResponse = await axios.get(genreListURL, config).catch(err => console.log(err))
+  res.send(tmdbRes.data?.genres)
 
-  res.send(extResponse.data?.genres)
+})
+
+app.get('/api/movies', async (req, res) => {
+
+  // need to use query to access params from request
+  const reqParams = req.query.genres
+
+  const tmdbRes = await axios.get(`${discoverMovieURL}?with_genres=${reqParams}`, baseConfig).catch(err => console.log(err)).catch(err => console.log(err))
+
+  const serverRes = tmdbRes.data?.results
+
+  res.send(serverRes)
 })
 
 app.listen(port, () => {

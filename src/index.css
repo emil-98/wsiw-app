@@ -4,7 +4,11 @@
 
 @layer base {
   h1 {
-    @apply text-[5vw];
+    @apply text-[5vw] font-bold;
+  }
+
+  h2{
+    @apply text-[3vw] font-bold;
   }
 
   h1, h2, h3, h4, h5, h6, p, li {
