@@ -36,7 +36,7 @@ const GenreListView = ({genres, submitHandler}) => {
         })}
       </ul>
       <div className='flex self-center m-2 justify-center w-fit h-fit rounded-full bg-gradient-to-tr from-purple-500 to-blue-500'>
-        <div className='flex m-[2px] rounded-full bg-gray-950'>
+        <div className='flex w-fit m-[2px] rounded-full bg-gray-950'>
           <GenericButton
             label={"Search All"}
             clickEvent={() => submitHandler(selectedGenres, genres, true)}
