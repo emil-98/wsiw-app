@@ -3,12 +3,13 @@ import db from './db.js';
 import express from "express";
 import axios from "axios";
 import cors from 'cors';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 
 const app = express()
 const port = process.env.SERVER_PORT
 const tmdbReadAccess = process.env.TMDB_READ_ACCESS
 const tmdbAPIKey = process.env.TMDB_API_KEY
-
 
 // all this cors stuff is essential for connecting to backend from vite frontend
 const allowedOrigins = [
@@ -19,7 +20,20 @@ const corsOptions = {
   origin: allowedOrigins
 }
 
+const PgSession = connectPgSimple(session)
+
+const sessionOptions = {
+  store: new PgSession({
+    pool: db,
+    tableName: 'sessions',
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}
+
 app.use(cors(corsOptions))
+app.use(session(sessionOptions))
 
 const baseConfig = {
   headers: {
@@ -39,12 +53,24 @@ app.get('/api/login', async (req, res) => {
   console.log("login route hit")
   try{
     const result = await db.query('SELECT id, email FROM logins WHERE email=$1 AND password=crypt($2, password);', [decodeURIComponent(req.query.email), decodeURIComponent(req.query.password)]);
+    req.session.user = {
+      id: result.rows[0].id,
+      email: result.rows[0].email
+    }
     res.send(result.rows);
   }catch (err) {
     console.error(err);
     res.status(500).send("Internal server error");
   }
 });
+
+app.get('/api/profile', async (req, res) => {
+  try{
+
+  }catch (err){
+    
+  }
+})
 
 app.post('/api/signup', async (req, res) => {
   try{
